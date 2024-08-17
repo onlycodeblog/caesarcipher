@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher</title>
+    <style>
+
+        @viewport {
+            width: device-width;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 5%;
+
+            background-image: url('bg_image.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat; /* Ensures the image doesn't repeat */
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            max-width: 500px; /* Set a max width to avoid stretching too far */
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box; /* Ensure padding doesn't affect total width */
+        }
+
+        button {
+            -webkit-appearance: none; /* Remove default iOS styling */
+            -moz-appearance: none; /* Remove Mozilla styling */
+            appearance: none; /* Remove styling for modern browsers */
+            border-radius: 0; /* Remove iOS default rounded corners */
+            border: none; /* Remove borders */
+
+            padding: 10px 20px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 160px;
+            margin-top: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        #input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 70%;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 5px #000000;
+            border: 1px solid #000000;
+        }
+
+        #output {
+            width: 100%;
+            max-width: 500px;
+            height: 250px;
+            margin: 0 auto;
+            padding: 10px;
+            border: 0.1px solid #ffffff;
+            background-color: #000000;
+            color: #ffffff;
+            font-family: monospace;
+            white-space: pre;
+        }
+
+
+        @media (max-width: 768px) { /* for tablet screens */
+            
+            input[type="text"], input[type="number"], #output {
+                width: 90%;
+            }
+
+            button {
+                width: 45%;
+            }
+        }
+
+        @media (max-width: 480px) { /* for mobile screens */
+
+            input[type="text"], input[type="number"], #output {
+                width: 90%;
+            }
+
+            button {
+                width: 45%;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <h1>Caesar Cipher</h1>
+
+    <div id="output"></div>
+
+    <br><br>
+
+    <div id="input">
+        <input type="text" id="inputText" placeholder="Enter your sentence here" value="N fr Nwts Rfs">
+        <input type="number" id="shift" placeholder="Enter shift value (integer)" min="1" max="25" value="5"><br>
+
+        <div class="button-container">
+            <button onclick="startSimulation('encrypt')">Encrypt</button>
+            <button onclick="startSimulation('decrypt')">Decrypt</button>
+        </div>
+
+    </div>
+
+    <script>
+        function caesarCipher(str, shift, mode) {
+            let result = '';
+            for (let i = 0; i < str.length; i++) {
+                let char = str[i];
+                if (char.match(/[a-zA-Z]/)) {
+                    let base = char === char.toUpperCase() ? 65 : 97;
+                    let charCode = char.charCodeAt(0);
+                    if (mode === 'encrypt') {
+                        result += String.fromCharCode((charCode - base + shift) % 26 + base);
+                    } else {
+                        result += String.fromCharCode((charCode - base - shift + 26) % 26 + base);
+                    }
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function startSimulation(mode) {
+            const text = document.getElementById('inputText').value;
+            let shift = parseInt(document.getElementById('shift').value);
+
+            if (!text || isNaN(shift)) {
+                alert("Please enter valid text and shift value.");
+                return;
+            }
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = ''; // Clear previous output
+
+            let tempResult = '';
+            for (let i = 0; i < text.length; i++) {
+                let char = text[i];
+                let shiftedChar;
+
+                if (char.match(/[a-zA-Z]/)) {
+                    shiftedChar = caesarCipher(char, shift, mode);
+                } else {
+                    shiftedChar = char; // Keep non-alphabet characters unchanged
+                }
+
+                tempResult += shiftedChar;
+
+                // Display the simulation
+                outputDiv.innerHTML = '';
+                outputDiv.innerHTML += `${mode === 'encrypt' ? 'Encrypting' : 'Decrypting'}...\n\n`;
+                outputDiv.innerHTML += tempResult;
+                await sleep(300); // Delay for simulation effect
+            }
+        }
+
+        // Simulate a decryption on page load
+        window.onload = function() {
+            startSimulation('decrypt');
+        };
+
+    </script>
+</body>
+</html>
