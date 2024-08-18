@@ -135,6 +135,8 @@
     <script>
         function caesarCipher(str, shift, mode) {
             let result = '';
+            shift = shift%26; /* for shift values greater than 26 */
+
             for (let i = 0; i < str.length; i++) {
                 let char = str[i];
                 if (char.match(/[a-zA-Z]/)) {
